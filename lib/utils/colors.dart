@@ -12,8 +12,8 @@ class AppColors {
   static const Color accentOrange = Color(0xFFFFB74D);
 
   // Background colors
-  static const Color backgroundLight = Color(0xFFEFE8F6);
-  static const Color backgroundDark = Color(0xFF1B1B1B);
+  static const Color backgroundLight = Color(0xFFffdcc5);
+  static const Color backgroundDark = Color(0xFF210027);
 
   // Text colors
   static const Color textLight = Color(0xFFE8EAF6);
