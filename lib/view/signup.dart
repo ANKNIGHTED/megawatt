@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:megawatt/utils/textfields.dart';
 import 'package:megawatt/utils/textstyles.dart';
+import 'package:megawatt/view/home.dart';
+import 'package:megawatt/view/homepage.dart';
+import 'package:sizer/sizer.dart';
 
-class Signup extends StatelessWidget {
-  const Signup({super.key});
+class Signup extends StatefulWidget {
+  final void Function()? onTap;
+  Signup({super.key, required this.onTap});
+
+  @override
+  State<Signup> createState() => _SignupState();
+}
+
+class _SignupState extends State<Signup> {
+  final TextEditingController emailcontroller = TextEditingController();
+
+  final TextEditingController passwordcontroller = TextEditingController();
+
+  final TextEditingController confirmcontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Sign Up', style: AppTextStyles.heading2(context)),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-      ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -24,53 +36,28 @@ class Signup extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             // Name Input Field
-            TextField(
-              keyboardType: TextInputType.name,
-              decoration: InputDecoration(
-                labelText: 'Name',
-                hintText: 'Enter your name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+            MyTextField(
+              controller: emailcontroller,
+              obscureText: false,
+              labelText: 'Email Address',
+              hintText: "Enter your Email",
             ),
-            const SizedBox(height: 16),
-            // Email Input Field
-            TextField(
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                hintText: 'Enter your email',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Phone Number Input Field
-            TextField(
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                labelText: 'Phone Number',
-                hintText: 'Enter your phone number',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
+
             // Password Input Field
-            TextField(
+            MyTextField(
+              controller: passwordcontroller,
               obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                hintText: 'Create a password',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+              labelText: 'Password',
+              hintText: "Enter your Password",
             ),
-            const SizedBox(height: 24),
+            MyTextField(
+              controller: confirmcontroller,
+              obscureText: true,
+              labelText: ' Confirm Password',
+              hintText: "Enter your Password again",
+            ),
+
+            SizedBox(height: 24),
             // Sign Up Button
             ElevatedButton(
               onPressed: () {
@@ -90,11 +77,12 @@ class Signup extends StatelessWidget {
             // Link to the login page
             GestureDetector(
               onTap: () {
+                widget.onTap!();
                 // TODO: Implement navigation to the login page
                 debugPrint('Navigate to login');
               },
               child: Text(
-                "Already have an account? Login",
+                "Already have an account? Login Here",
                 textAlign: TextAlign.center,
                 style: AppTextStyles.body(context).copyWith(
                   color: Theme.of(context).colorScheme.primary,

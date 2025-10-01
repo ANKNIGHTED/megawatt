@@ -12,13 +12,31 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   List profile = [
-    [Icons.shop, 'Orders'],
-    [Icons.favorite, 'Your Favourites'],
-    [Icons.help, 'Help'],
-    [Icons.wallet, 'Wallet'],
-    [Icons.settings, 'Settings'],
-    [Icons.logout, 'Sign Out'],
+    [Icons.shop, 'Orders', '/Orders'],
+    [Icons.favorite, 'Your Favourites', '/Help'],
+
+    [Icons.help, 'Help', '/Help'],
+    [Icons.wallet, 'Wallet', '/Wallet'],
+    [Icons.settings, 'Settings', '/Settings'],
+    [
+      Icons.logout,
+      'Sign Out'
+          'Sign Out',
+    ],
   ];
+
+  void _handleTap(BuildContext context, String route) {
+    if (route == 'logout') {
+      // Logic for signing out (e.g., calling a provider method)
+      print('Sign Out logic needs to be implemented here.');
+      // No navigation push, maybe pushReplacement to login page:
+      // Navigator.pushReplacementNamed(context, '/login');
+    } else {
+      // Use pushNamed for all defined pages
+      Navigator.pushNamed(context, route);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -48,12 +66,20 @@ class _ProfileState extends State<Profile> {
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
+                final item = profile[index];
+                final IconData icon = item[0];
+                final String title = item[1];
+                final String route = item[2];
                 return ListTile(
                   leading: Icon(profile[index][0], size: 3.h),
                   title: Text(
-                    profile[index][1],
+                    title,
+                    //profile[index][1],
                     style: AppTextStyles.subheading(context),
                   ),
+                  onTap: () {
+                    _handleTap(context, route);
+                  },
                 );
               },
             ),

@@ -1,9 +1,13 @@
+/*
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:megawatt/controller/provider/authProvider.dart' as app;
+import 'package:megawatt/controller/services/authenticationServices/authenticationServices.dart';
 import 'package:megawatt/utils/colors.dart';
 import 'package:megawatt/utils/textstyles.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 class Authentication extends StatefulWidget {
@@ -16,6 +20,30 @@ class Authentication extends StatefulWidget {
 class _AuthenticationState extends State<Authentication> {
   String selectedCountry = "+254";
   TextEditingController phoneController = TextEditingController();
+  bool receiveOTPButtonPressed = false;
+  bool googleButtonPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 3. Request focus after the frame is built
+    // This ensures the widget is ready to receive focus.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        receiveOTPButtonPressed = false;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    // 4. Dispose of the  TextEditingController to free up memory
+
+    phoneController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -51,7 +79,7 @@ class _AuthenticationState extends State<Authentication> {
                     width: 25.w,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8.sp),
-                      color: Colors.grey,
+                      color: AppColors.accentOrange,
                     ),
                     alignment: Alignment.center,
                     child: Text(
@@ -74,7 +102,7 @@ class _AuthenticationState extends State<Authentication> {
                       ),
                       hintText: "Mobile Number",
                       hintStyle: AppTextStyles.body(context),
-                      fillColor: Colors.grey,
+                      fillColor: AppColors.accentOrange,
                       filled: true,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(5.sp),
@@ -95,29 +123,53 @@ class _AuthenticationState extends State<Authentication> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                setState(() {
+                  receiveOTPButtonPressed = true;
+                });
+                try {
+                  context.read<app.AuthProvider>().updateMobileNumber(
+                    '$selectedCountry${phoneController.text.trim()}',
+                  );
+                  await Authenticationservices.receiveOTP(
+                    context: context,
+                    mobileNo: '$selectedCountry${phoneController.text.trim()}',
+                  );
+                } catch (e) {
+                  print('Authentication failed: $e');
+                }
+                setState(() {
+                  receiveOTPButtonPressed = false;
+                });
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryPurple,
                 minimumSize: Size(90.w, 8.h),
               ),
 
-              child: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Next",
-                      style: AppTextStyles.subheading(
-                        context,
-                      ).copyWith(color: Colors.white),
-                    ),
-                  ),
-                  Positioned(
-                    right: 2.w,
-                    child: Icon(Icons.arrow_forward, color: Colors.white),
-                  ),
-                ],
-              ),
+              child:
+                  receiveOTPButtonPressed
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Next",
+                              style: AppTextStyles.subheading(
+                                context,
+                              ).copyWith(color: Colors.white),
+                            ),
+                          ),
+                          Positioned(
+                            right: 2.w,
+                            child: Icon(
+                              Icons.arrow_forward,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
             ),
             SizedBox(height: 3.w),
             Text(
@@ -134,7 +186,7 @@ class _AuthenticationState extends State<Authentication> {
                     "or",
                     style: AppTextStyles.heading2(
                       context,
-                    ).copyWith(color: Colors.grey),
+                    ).copyWith(color: AppColors.textDark),
                   ),
                 ),
 
@@ -143,33 +195,51 @@ class _AuthenticationState extends State<Authentication> {
             ),
             SizedBox(height: 2.h),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                setState(() {
+                  googleButtonPressed = true;
+                });
+                try {
+                  await Authenticationservices.signInWithGoogle(
+                    context: context,
+                  );
+                } catch (e) {
+                  // Handle error feedback to user
+                  print('Google Sign-In failed: $e');
+                }
+                setState(() {
+                  googleButtonPressed = false;
+                });
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryPurple,
                 minimumSize: Size(90.w, 10.h),
               ),
 
-              child: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Continue with Google",
-                      style: AppTextStyles.subheading(
-                        context,
-                      ).copyWith(color: Colors.white),
-                    ),
-                  ),
-                  Positioned(
-                    left: 2.w,
-                    child: FaIcon(
-                      FontAwesomeIcons.google,
-                      color: Colors.black,
-                      size: 9.h,
-                    ),
-                  ),
-                ],
-              ),
+              child:
+                  googleButtonPressed
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Continue with Google",
+                              style: AppTextStyles.subheading(
+                                context,
+                              ).copyWith(color: Colors.white),
+                            ),
+                          ),
+                          Positioned(
+                            left: 2.w,
+                            child: Icon(
+                              FontAwesomeIcons.google,
+                              color: Colors.black,
+                              size: 3.h,
+                            ),
+                          ),
+                        ],
+                      ),
             ),
           ],
         ),
@@ -177,3 +247,4 @@ class _AuthenticationState extends State<Authentication> {
     );
   }
 }
+*/

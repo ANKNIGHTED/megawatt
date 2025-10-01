@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "171630190575",
+    "project_id": "megawatt-16853",
+    "storage_bucket": "megawatt-16853.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:171630190575:android:1995da0a62d815e5efe01a",
+        "android_client_info": {
+          "package_name": "com.example.megawatt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKzK6Z8OPgdSaACiWmfnzUxjiCVDxc2qo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

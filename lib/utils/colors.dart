@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-// This file defines a custom color scheme with purple and orange tones for your mobile app.
-
 class AppColors {
   // Primary colors
   static const Color primaryPurple = Color(0xFF673AB7);
@@ -21,7 +19,7 @@ class AppColors {
   static const Color textMuted = Color(0xFF616161);
 
   // A color swatch for light theme
-  static const ColorScheme lightScheme = ColorScheme(
+  static final ColorScheme lightScheme = ColorScheme(
     primary: primaryPurple,
     primaryContainer: accentPurple,
     secondary: primaryOrange,
@@ -38,7 +36,7 @@ class AppColors {
   );
 
   // A color swatch for dark theme
-  static const ColorScheme darkScheme = ColorScheme(
+  static final ColorScheme darkScheme = ColorScheme(
     primary: primaryPurple,
     primaryContainer: accentPurple,
     secondary: primaryOrange,
