@@ -29,6 +29,12 @@ class _SignupState extends State<Signup> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Image.asset(
+              'assets/images/splashscreen/whitecafe-Photoroom.png',
+              width: 175.px,
+              height: 140.px,
+              fit: BoxFit.cover,
+            ),
             Text(
               'Create an Account',
               textAlign: TextAlign.center,

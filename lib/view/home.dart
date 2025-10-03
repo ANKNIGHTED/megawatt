@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:megawatt/utils/colors.dart';
+import 'package:megawatt/utils/currentlocation.dart';
+import 'package:megawatt/utils/descriptionbox.dart';
 import 'package:megawatt/utils/textstyles.dart';
 import 'package:sizer/sizer.dart';
 
@@ -19,7 +21,9 @@ class _HomeState extends State<Home> {
           padding: EdgeInsets.symmetric(horizontal: 3.h, vertical: 2.h),
           children: [
             SizedBox(height: 2.h),
-            Text('current location', style: AppTextStyles.body(context)),
+            const Currentlocation(),
+            const DescriptionBox(),
+
             SizedBox(height: 2.h),
             Row(
               children: [

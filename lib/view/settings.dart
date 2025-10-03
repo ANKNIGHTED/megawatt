@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:megawatt/controller/provider/colors_provider.dart';
 import 'package:megawatt/utils/colors.dart';
 import 'package:megawatt/utils/textstyles.dart';
+import 'package:megawatt/view/homepage.dart';
 import 'package:provider/provider.dart';
 
 class Settings extends StatelessWidget {
@@ -11,6 +13,17 @@ class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Homepage()),
+            );
+          },
+          icon: Icon(FontAwesomeIcons.arrowLeft),
+        ),
+      ),
       body: Column(
         children: [
           Container(
@@ -33,7 +46,7 @@ class Settings extends StatelessWidget {
                   value:
                       Provider.of<ColorsProvider>(
                         context,
-                        listen: true,
+                        listen: false,
                       ).isDarkMode,
                   onChanged:
                       (value) =>

@@ -1,6 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:megawatt/model/food.dart';
+import 'package:megawatt/model/restaurant.dart';
 import 'package:megawatt/utils/colors.dart';
+import 'package:megawatt/utils/foodtile.dart';
+import 'package:megawatt/utils/sliverappbar.dart';
+import 'package:megawatt/utils/tabbar.dart';
 import 'package:megawatt/utils/textstyles.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 class Search extends StatefulWidget {
@@ -10,7 +17,24 @@ class Search extends StatefulWidget {
   State<Search> createState() => _SearchState();
 }
 
-class _SearchState extends State<Search> {
+class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      length: FoodCategory.values.length,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   List categories = [
     ['images/categories/breakfast.png', 'Breakfast'],
     ['images/categories/lunch.png', 'Lunch'],
@@ -21,51 +45,49 @@ class _SearchState extends State<Search> {
     ['images/categories/beverages.png', 'Beverages'],
     ['images/categories/specials.png', 'Specials'],
   ];
+
+  // to sort and return a list of food items that belong to a specific category
+  List<Food> _filterMenuByCategory(FoodCategory category, List<Food> fullMenu) {
+    return fullMenu.where((food) => food.category == category).toList();
+  }
+
+  //return list of foods in given category
+
+  List<Widget> getFoodinThisCategory(List<Food> fullMenu) {
+    return FoodCategory.values.map((Category) {
+      List<Food> categoryMenu = _filterMenuByCategory(Category, fullMenu);
+      return ListView.builder(
+        itemCount: categoryMenu.length,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) {
+          //get individual food
+          final Food = categoryMenu[index];
+          //return food tile UI
+          return Foodtile(food: Food, onTap: () {});
+        },
+      );
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
-          children: [
-            SizedBox(height: 2.h),
-            Text(
-              'All Categories',
-              style: AppTextStyles.heading2(context),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 3.h),
-            GridView.builder(
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.sp),
-                          color: AppColors.accentOrange,
-                        ),
-                        child: Image(image: AssetImage(categories[index][0])),
-                      ),
-                    ),
-                    SizedBox(height: 0.5.h),
-                    Text(
-                      categories[index][1],
-                      style: AppTextStyles.subheading(context),
-                    ),
-                  ],
-                );
-              },
-              itemCount: categories.length,
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.8,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-              ),
-            ),
-          ],
+        body: NestedScrollView(
+          headerSliverBuilder:
+              (context, innerBoxIsScrolled) => [
+                Sliverappbar(
+                  child: Text('Hello'),
+                  title: Tabbar(tabController: _tabController, tabs: []),
+                ),
+              ],
+          body: Consumer<Restaurant>(
+            builder:
+                (context, restaurant, child) => TabBarView(
+                  controller: _tabController,
+                  children: getFoodinThisCategory(restaurant.menu),
+                ),
+          ),
         ),
       ),
     );

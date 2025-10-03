@@ -47,11 +47,13 @@ class _LoginState extends State<Login> {
                 textAlign: TextAlign.center,
                 style: AppTextStyles.heading1(context),
               ),
-              Icon(
-                Icons.lock_open_rounded,
-                size: 40,
-                color: AppColors.accentPurple,
+              Image.asset(
+                'assets/images/splashscreen/whitecafe-Photoroom.png',
+                width: 175.px,
+                height: 145.px,
+                fit: BoxFit.fitHeight,
               ),
+
               SizedBox(height: 3.h),
               Text(
                 'Food for the Nation',

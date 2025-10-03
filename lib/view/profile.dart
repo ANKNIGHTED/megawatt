@@ -18,11 +18,7 @@ class _ProfileState extends State<Profile> {
     [Icons.help, 'Help', '/Help'],
     [Icons.wallet, 'Wallet', '/Wallet'],
     [Icons.settings, 'Settings', '/Settings'],
-    [
-      Icons.logout,
-      'Sign Out'
-          'Sign Out',
-    ],
+    [Icons.logout, 'Sign Out', '/SignInLogic'],
   ];
 
   void _handleTap(BuildContext context, String route) {

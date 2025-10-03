@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:megawatt/controller/provider/authProvider.dart';
 import 'package:megawatt/controller/provider/colors_provider.dart';
 import 'package:megawatt/firebase_options.dart';
+import 'package:megawatt/model/restaurant.dart';
 import 'package:megawatt/view/authentication.dart';
 import 'package:megawatt/view/cart.dart';
 import 'package:megawatt/view/favourites.dart';
@@ -39,8 +40,9 @@ class Megawatt extends StatelessWidget {
         return MultiProvider(
           providers: [
             ChangeNotifierProvider<ColorsProvider>(
-              create: (_) => ColorsProvider(),
+              create: (context) => ColorsProvider(),
             ),
+            ChangeNotifierProvider(create: (context) => Restaurant()),
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
@@ -64,7 +66,8 @@ class Megawatt extends StatelessWidget {
               '/Search': (context) => Search(),
               '/Optscreen': (context) => Otpscreen(),
               '/Orders': (context) => Orders(),
-              'Favoutires': (context) => Favourites(),
+              '/Favoutires': (context) => Favourites(),
+              '/SignInLogic': (context) => SignInLogic(),
               // '/Authentication': (context) => Authentication(),
             },
           ),
