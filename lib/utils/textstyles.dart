@@ -32,7 +32,7 @@ class AppTextStyles {
   );
 
   static const TextStyle _captionBase = TextStyle(
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
   );
 

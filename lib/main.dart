@@ -1,25 +1,19 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:megawatt/controller/provider/authProvider.dart';
 import 'package:megawatt/controller/provider/colors_provider.dart';
 import 'package:megawatt/firebase_options.dart';
 import 'package:megawatt/model/restaurant.dart';
-import 'package:megawatt/view/authentication.dart';
 import 'package:megawatt/view/cart.dart';
 import 'package:megawatt/view/favourites.dart';
 import 'package:megawatt/view/home.dart';
 import 'package:megawatt/utils/colors.dart';
-import 'package:megawatt/view/homepage.dart';
 import 'package:megawatt/view/login.dart';
 import 'package:megawatt/view/orders.dart';
-
-import 'package:megawatt/view/otpscreen.dart';
 import 'package:megawatt/view/profile.dart';
 import 'package:megawatt/view/search.dart';
 import 'package:megawatt/view/settings.dart';
 import 'package:megawatt/view/signInLogic%20.dart';
 import 'package:megawatt/view/signup.dart';
-
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -64,7 +58,7 @@ class Megawatt extends StatelessWidget {
               '/Profile': (context) => Profile(),
               '/Settings': (context) => Settings(),
               '/Search': (context) => Search(),
-              '/Optscreen': (context) => Otpscreen(),
+
               '/Orders': (context) => Orders(),
               '/Favoutires': (context) => Favourites(),
               '/SignInLogic': (context) => SignInLogic(),

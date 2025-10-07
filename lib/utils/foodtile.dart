@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:megawatt/model/food.dart';
+import 'package:megawatt/utils/colors.dart';
+import 'package:megawatt/utils/textstyles.dart';
+import 'package:sizer/sizer.dart';
 
 class Foodtile extends StatelessWidget {
   final Food food;
@@ -12,22 +15,42 @@ class Foodtile extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: onTap,
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    Text(food.name),
-                    Text(food.price.toString()),
-                    Text(food.description),
-                  ],
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(food.name, style: AppTextStyles.subheading(context)),
+                      Text(
+                        "Ksh " + food.price.toString(),
+                        style: AppTextStyles.body(
+                          context,
+                        ).copyWith(color: AppColors.textMuted),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        food.description,
+                        style: AppTextStyles.caption(context).copyWith(
+                          color: Theme.of(context).colorScheme.primaryContainer,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              //image
-              Image.asset(food.imagepath),
-            ],
+                const SizedBox(width: 15),
+                //image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(food.imagepath, height: 20.h),
+                ),
+              ],
+            ),
           ),
         ),
+        const Divider(color: AppColors.textMuted, endIndent: 25, indent: 25),
       ],
     );
   }

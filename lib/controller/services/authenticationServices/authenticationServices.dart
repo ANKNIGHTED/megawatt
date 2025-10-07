@@ -1,4 +1,3 @@
-/*
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,9 +14,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
 class Authenticationservices {
+  //get instance of firebase auth
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static bool checkAuthentication(BuildContext context) {
-    User? user = auth.currentUser;
-    if (user == null) {
+    User? getCurrentUser = auth.currentUser;
+    return true;
+    /*
+    if (getCurrentUser == null) {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const Authentication()),
@@ -30,7 +33,7 @@ class Authenticationservices {
       MaterialPageRoute(builder: (context) => const Homepage()),
       (route) => false,
     );
-    return true;
+    */
   }
 
   static receiveOTP({
@@ -84,4 +87,3 @@ class Authenticationservices {
     }
   }
 }
-*/

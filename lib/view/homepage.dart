@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:megawatt/utils/textstyles.dart';
+
 import 'package:megawatt/view/cart.dart';
 import 'package:megawatt/view/home.dart';
-import 'package:megawatt/view/homepage.dart';
+
 import 'package:megawatt/view/profile.dart';
 import 'package:megawatt/view/search.dart';
-import 'package:megawatt/view/settings.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -57,11 +55,10 @@ class _HomepageState extends State<Homepage> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Me'),
         ],
 
-        // The color of the selected item, from the theme's color scheme.
         selectedItemColor: Theme.of(context).colorScheme.primary,
-        // The color of unselected items, with a slight tint.
+
         unselectedItemColor: Theme.of(context).colorScheme.secondary,
-        // Use shifting type for a modern look.
+
         type: BottomNavigationBarType.shifting,
       ),
     );

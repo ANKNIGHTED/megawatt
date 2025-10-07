@@ -64,6 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '171630190575',
     projectId: 'megawatt-16853',
     storageBucket: 'megawatt-16853.firebasestorage.app',
+    iosClientId: '171630190575-2dhjfi9ofbnc53uo6ii13p16asavdioa.apps.googleusercontent.com',
     iosBundleId: 'com.example.megawatt',
   );
 
@@ -73,6 +74,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '171630190575',
     projectId: 'megawatt-16853',
     storageBucket: 'megawatt-16853.firebasestorage.app',
+    iosClientId: '171630190575-2dhjfi9ofbnc53uo6ii13p16asavdioa.apps.googleusercontent.com',
     iosBundleId: 'com.example.megawatt',
   );
 
@@ -85,4 +87,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'megawatt-16853.firebasestorage.app',
     measurementId: 'G-MJSD2F34B7',
   );
+
 }

@@ -4,7 +4,6 @@ import 'package:megawatt/utils/mybutton.dart';
 import 'package:megawatt/utils/textfields.dart';
 import 'package:megawatt/utils/textstyles.dart';
 import 'package:megawatt/view/homepage.dart';
-import 'package:megawatt/view/signup.dart';
 import 'package:sizer/sizer.dart';
 
 class Login extends StatefulWidget {

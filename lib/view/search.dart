@@ -7,6 +7,7 @@ import 'package:megawatt/utils/foodtile.dart';
 import 'package:megawatt/utils/sliverappbar.dart';
 import 'package:megawatt/utils/tabbar.dart';
 import 'package:megawatt/utils/textstyles.dart';
+import 'package:megawatt/view/foodpage.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -63,7 +64,14 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
           //get individual food
           final Food = categoryMenu[index];
           //return food tile UI
-          return Foodtile(food: Food, onTap: () {});
+          return Foodtile(
+            food: Food,
+            onTap:
+                () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Foodpage(food: Food)),
+                ),
+          );
         },
       );
     }).toList();
