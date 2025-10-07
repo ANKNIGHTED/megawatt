@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:megawatt/controller/provider/colors_provider.dart';
+import 'package:megawatt/controller/services/authenticationServices/auth_gate.dart';
 import 'package:megawatt/firebase_options.dart';
 import 'package:megawatt/model/restaurant.dart';
 import 'package:megawatt/view/cart.dart';
@@ -49,7 +50,7 @@ class Megawatt extends StatelessWidget {
               useMaterial3: true,
             ),
             themeMode: ThemeMode.light,
-            home: SignInLogic(),
+            home: const AuthGate(),
             routes: {
               '/Home': (context) => Home(),
               '/Signup': (context) => Signup(onTap: () {}),

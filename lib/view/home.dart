@@ -21,7 +21,7 @@ class _HomeState extends State<Home> {
           padding: EdgeInsets.symmetric(horizontal: 3.h, vertical: 2.h),
           children: [
             SizedBox(height: 2.h),
-            const Currentlocation(),
+            Currentlocation(),
             const DescriptionBox(),
 
             SizedBox(height: 2.h),

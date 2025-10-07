@@ -1,10 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:megawatt/controller/services/authenticationServices/firestore.dart';
+import 'package:megawatt/model/restaurant.dart';
 import 'package:megawatt/utils/colors.dart';
 import 'package:megawatt/utils/receipt.dart';
 import 'package:megawatt/utils/textstyles.dart';
+import 'package:provider/provider.dart';
 
-class DeliveryProgressPage extends StatelessWidget {
+class DeliveryProgressPage extends StatefulWidget {
   const DeliveryProgressPage({super.key});
+
+  @override
+  State<DeliveryProgressPage> createState() => _DeliveryProgressPageState();
+}
+
+class _DeliveryProgressPageState extends State<DeliveryProgressPage> {
+  final FirestoreServices _db = FirestoreServices();
+
+  @override
+  void initState() {
+    super.initState();
+    //submit order to database
+    String receipt = context.read<Restaurant>().displayCartReceipt();
+    _db.saveOrderToDatabase(receipt);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +36,7 @@ class DeliveryProgressPage extends StatelessWidget {
           ),
         ),
       ),
-      body: Column(children: [Receipt()]),
+      body: SingleChildScrollView(child: Column(children: [Receipt()])),
       bottomNavigationBar: _buildBottomNavBar(context),
     );
   }

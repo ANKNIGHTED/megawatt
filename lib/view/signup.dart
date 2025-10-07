@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:megawatt/controller/services/authenticationServices/authenticationServices.dart';
 import 'package:megawatt/utils/textfields.dart';
 import 'package:megawatt/utils/textstyles.dart';
 import 'package:megawatt/view/home.dart';
@@ -19,6 +20,36 @@ class _SignupState extends State<Signup> {
   final TextEditingController passwordcontroller = TextEditingController();
 
   final TextEditingController confirmcontroller = TextEditingController();
+  void register() async {
+    //get auth service
+    final _authService = Authenticationservices();
+    //check if passwords match ->create user
+    if (passwordcontroller.text == confirmcontroller.text) {
+      //create user
+      try {
+        await _authService.signUpWithEmailPassword(
+          emailcontroller.text,
+          passwordcontroller.text,
+        );
+      }
+      //display errors
+      catch (e) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(title: Text(e.toString())),
+        );
+      }
+    }
+    // if passwords don't match -> show error
+    else {
+      showDialog(
+        context: context,
+        builder:
+            (context) =>
+                const AlertDialog(title: Text("Passwords don't match")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +98,7 @@ class _SignupState extends State<Signup> {
             // Sign Up Button
             ElevatedButton(
               onPressed: () {
-                // TODO: Implement sign up logic here
-                debugPrint('Sign Up button pressed');
+                register();
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,

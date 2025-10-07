@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:megawatt/model/restaurant.dart';
 import 'package:megawatt/utils/textstyles.dart';
+import 'package:provider/provider.dart';
 
 class Currentlocation extends StatelessWidget {
-  const Currentlocation({super.key});
+  final textController = TextEditingController();
+  Currentlocation({super.key});
 
   void openLocationSearchBox(BuildContext context) {
     showDialog(
@@ -10,8 +13,10 @@ class Currentlocation extends StatelessWidget {
       builder:
           (context) => AlertDialog(
             title: const Text("Your Location"),
-            content: const TextField(
-              decoration: const InputDecoration(hintText: "search Address"),
+
+            content: TextField(
+              controller: textController,
+              decoration: const InputDecoration(hintText: "Enter Address"),
             ),
             actions: [
               //cancel button
@@ -22,7 +27,15 @@ class Currentlocation extends StatelessWidget {
 
               //save button
               MaterialButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  Navigator.pop(context);
+                  //update delivery address
+
+                  String newAdress = textController.text;
+                  context.read<Restaurant>().updateDeliveryAddresss(newAdress);
+
+                  textController.clear();
+                },
                 child: const Text("Save"),
               ),
             ],
@@ -42,8 +55,15 @@ class Currentlocation extends StatelessWidget {
             onTap: () => openLocationSearchBox(context),
             child: Row(
               children: [
+                Consumer<Restaurant>(
+                  builder:
+                      (context, restaurant, child) => Text(
+                        restaurant.deliveryAddress,
+                        style: AppTextStyles.body(context),
+                      ),
+                ),
+
                 //address
-                Text('First Floor', style: AppTextStyles.body(context)),
                 Icon(Icons.keyboard_arrow_down_rounded),
               ],
             ),

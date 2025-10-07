@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:megawatt/controller/services/authenticationServices/authenticationServices.dart';
 import 'package:megawatt/utils/colors.dart';
 import 'package:megawatt/utils/textstyles.dart';
 import 'package:sizer/sizer.dart';
@@ -23,10 +24,8 @@ class _ProfileState extends State<Profile> {
 
   void _handleTap(BuildContext context, String route) {
     if (route == 'logout') {
-      // Logic for signing out (e.g., calling a provider method)
-      print('Sign Out logic needs to be implemented here.');
-      // No navigation push, maybe pushReplacement to login page:
-      // Navigator.pushReplacementNamed(context, '/login');
+      final _authService = Authenticationservices();
+      _authService.signOut();
     } else {
       // Use pushNamed for all defined pages
       Navigator.pushNamed(context, route);

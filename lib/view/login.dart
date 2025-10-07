@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:megawatt/controller/services/authenticationServices/authenticationServices.dart';
 import 'package:megawatt/utils/colors.dart';
 import 'package:megawatt/utils/mybutton.dart';
 import 'package:megawatt/utils/textfields.dart';
@@ -19,16 +20,57 @@ class _LoginState extends State<Login> {
 
   final TextEditingController passwordcontroller = TextEditingController();
 
-  void login() {
-    /*
-  fill out authentication here..
-*/
+  Future<void> login() async {
+    if (emailcontroller.text.isEmpty || passwordcontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder:
+            (context) =>
+                const AlertDialog(title: Text("Please fill in all fields.")),
+      );
+      return;
+    }
+    //get instance of authservice
 
-    //navigate to home page
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const Homepage()),
+    final _authService = Authenticationservices();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
     );
+    //try sign in
+    try {
+      await _authService.signInWithEmailPassword(
+        emailcontroller.text,
+        passwordcontroller.text,
+      );
+
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    }
+    //display errors
+    catch (e) {
+      if (mounted) {
+        Navigator.pop(context); // Dismiss the loading indicator
+      }
+      showDialog(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: const Text("Login Failed"),
+              content: Text(e.toString()),
+            ),
+      );
+      /*
+      showDialog(
+
+        context: context,
+        builder: (context) => AlertDialog(title: Text(e.toString())),
+      );
+      */
+    }
   }
 
   @override

@@ -1,89 +1,44 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:megawatt/constant/constant.dart';
-import 'package:megawatt/view/authentication.dart';
-import 'package:megawatt/view/homepage.dart';
-
-import 'package:megawatt/view/otpscreen.dart';
-import 'package:megawatt/view/signInLogic%20.dart';
-import 'package:page_transition/page_transition.dart';
-import 'package:megawatt/controller/provider/authProvider.dart' as app;
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:provider/provider.dart';
 
 class Authenticationservices {
-  //get instance of firebase auth
+  // get instance of firebase auth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  static bool checkAuthentication(BuildContext context) {
-    User? getCurrentUser = auth.currentUser;
-    return true;
-    /*
-    if (getCurrentUser == null) {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const Authentication()),
-        (route) => false,
-      );
-      return false;
-    }
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const Homepage()),
-      (route) => false,
-    );
-    */
+
+  //get current user
+  User? getCurrentUser() {
+    return _firebaseAuth.currentUser;
   }
 
-  static receiveOTP({
-    required BuildContext context,
-    required String mobileNo,
-  }) async {
+  //sign in
+  Future<UserCredential> signInWithEmailPassword(String email, password) async {
     try {
-      await auth.verifyPhoneNumber(
-        phoneNumber: mobileNo,
-        verificationCompleted: (PhoneAuthCredential credentials) {
-          log(credentials.toString());
-        },
-        verificationFailed: (FirebaseAuthException exception) {
-          log(exception.toString());
-          throw Exception(exception);
-        },
-        codeSent: (String verificationID, int? resendToken) {
-          context.read<app.AuthProvider>().updateVerificationID(verificationID);
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.rightToLeft,
-              child: Otpscreen(),
-            ),
-          );
-        },
-        codeAutoRetrievalTimeout: (String verificationID) {},
-      );
-    } catch (e) {
-      log(e.toString());
+      //sign user in
+      UserCredential userCredential = await _firebaseAuth
+          .signInWithEmailAndPassword(email: email, password: password);
+      return userCredential;
+    }
+    //catch any errors
+    on FirebaseAuthException catch (e) {
+      throw Exception(e.code);
     }
   }
 
-  static verifyOTP({required BuildContext context, required String otp}) async {
+  //sign in
+  Future<UserCredential> signUpWithEmailPassword(String email, password) async {
     try {
-      AuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: context.read<app.AuthProvider>().verificationID!,
-        smsCode: otp,
-      );
-      await auth.signInWithCredential(credential);
-      Navigator.push(
-        context,
-        PageTransition(
-          type: PageTransitionType.rightToLeft,
-          child: SignInLogic(),
-        ),
-      );
-    } catch (e) {
-      log(e.toString());
-      throw Exception(e);
+      //sign user in
+      UserCredential userCredential = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      return userCredential;
     }
+    //catch any errors
+    on FirebaseAuthException catch (e) {
+      throw Exception(e.code);
+    }
+  }
+  //sign out
+
+  Future<void> signOut() async {
+    return await _firebaseAuth.signOut();
   }
 }
