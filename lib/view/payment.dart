@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:megawatt/model/restaurant.dart';
 import 'package:megawatt/utils/colors.dart';
 import 'package:megawatt/utils/mybutton.dart';
 import 'package:megawatt/view/delivery_progress_page.dart';
-//import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 
 class Payment extends StatefulWidget {
@@ -78,6 +79,10 @@ class _PaymentState extends State<Payment> {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = context.watch<Restaurant>();
+    final bool isCartEmpty = cartProvider.cart.isEmpty;
+    final double cartTotal = cartProvider.getTotalPrice();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -110,6 +115,46 @@ class _PaymentState extends State<Payment> {
               onCreditCardModelChange: onCreditCardModelChange,
               formKey: formKey,
             ),
+            if (!isCartEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 25.0,
+                  vertical: 10.0,
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16.0,
+                    horizontal: 12.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.primaryPurple),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Total Amount:",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.black, // Adjust color based on theme
+                        ),
+                      ),
+                      Text(
+                        // Display the total price (assuming Ksh is the currency)
+                        "Ksh ${cartTotal.toStringAsFixed(2)}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: AppColors.primaryOrange,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             SizedBox(height: 25),
             Mybutton(text: "Pay Now", onTap: userTappedPay),
             SizedBox(height: 25),

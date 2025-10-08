@@ -8,10 +8,12 @@ import 'package:megawatt/view/homepage.dart';
 import 'package:provider/provider.dart';
 
 class Settings extends StatelessWidget {
-  Settings({super.key});
+  const Settings({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colorsProvider = Provider.of<ColorsProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -21,7 +23,7 @@ class Settings extends StatelessWidget {
               MaterialPageRoute(builder: (context) => const Homepage()),
             );
           },
-          icon: Icon(FontAwesomeIcons.arrowLeft),
+          icon: const Icon(FontAwesomeIcons.arrowLeft),
         ),
       ),
       body: Column(
@@ -31,8 +33,8 @@ class Settings extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               color: Theme.of(context).colorScheme.primaryContainer,
             ),
-            margin: EdgeInsets.only(left: 25, top: 10, right: 25),
-            padding: EdgeInsets.all(25),
+            margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+            padding: const EdgeInsets.all(25),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -43,17 +45,8 @@ class Settings extends StatelessWidget {
                   ).copyWith(color: AppColors.textDark),
                 ),
                 CupertinoSwitch(
-                  value:
-                      Provider.of<ColorsProvider>(
-                        context,
-                        listen: false,
-                      ).isDarkMode,
-                  onChanged:
-                      (value) =>
-                          Provider.of<ColorsProvider>(
-                            context,
-                            listen: false,
-                          ).toggleTheme(),
+                  value: colorsProvider.isDarkMode,
+                  onChanged: (value) => colorsProvider.toggleTheme(),
                 ),
               ],
             ),

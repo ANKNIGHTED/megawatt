@@ -36,6 +36,16 @@ class Authenticationservices {
       throw Exception(e.code);
     }
   }
+
+  //reset password
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw Exception(e.code);
+    }
+  }
+
   //sign out
 
   Future<void> signOut() async {

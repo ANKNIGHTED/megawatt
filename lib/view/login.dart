@@ -4,6 +4,7 @@ import 'package:megawatt/utils/colors.dart';
 import 'package:megawatt/utils/mybutton.dart';
 import 'package:megawatt/utils/textfields.dart';
 import 'package:megawatt/utils/textstyles.dart';
+import 'package:megawatt/view/forgotPassword.dart';
 import 'package:megawatt/view/homepage.dart';
 import 'package:sizer/sizer.dart';
 
@@ -30,6 +31,7 @@ class _LoginState extends State<Login> {
       );
       return;
     }
+
     //get instance of authservice
 
     final _authService = Authenticationservices();
@@ -39,37 +41,33 @@ class _LoginState extends State<Login> {
       barrierDismissible: false,
       builder: (context) => const Center(child: CircularProgressIndicator()),
     );
+
     //try sign in
     try {
       await _authService.signInWithEmailPassword(
         emailcontroller.text,
         passwordcontroller.text,
       );
-
+      if (mounted) Navigator.pop(context);
+      // Then navigate to Homepage
       if (mounted) {
-        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Homepage()),
+        );
       }
-    }
-    //display errors
-    catch (e) {
+    } on Exception catch (e) {
       if (mounted) {
-        Navigator.pop(context); // Dismiss the loading indicator
+        Navigator.pop(context); // Close loading dialog
+        showDialog(
+          context: context,
+          builder:
+              (context) => AlertDialog(
+                title: const Text("Login Failed"),
+                content: Text(e.toString()),
+              ),
+        );
       }
-      showDialog(
-        context: context,
-        builder:
-            (context) => AlertDialog(
-              title: const Text("Login Failed"),
-              content: Text(e.toString()),
-            ),
-      );
-      /*
-      showDialog(
-
-        context: context,
-        builder: (context) => AlertDialog(title: Text(e.toString())),
-      );
-      */
     }
   }
 
@@ -118,6 +116,33 @@ class _LoginState extends State<Login> {
                 obscureText: true,
                 labelText: 'Password',
                 hintText: "Enter your Password",
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ForgotPasswordPage(),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      right: 15.0,
+                      top: 8.0,
+                      bottom: 8.0,
+                    ),
+                    child: Text(
+                      "Forgot Password?",
+                      style: AppTextStyles.caption(context).copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
               ),
 
               SizedBox(height: 3.h),

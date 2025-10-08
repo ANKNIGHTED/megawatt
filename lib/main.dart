@@ -6,8 +6,10 @@ import 'package:megawatt/firebase_options.dart';
 import 'package:megawatt/model/restaurant.dart';
 import 'package:megawatt/view/cart.dart';
 import 'package:megawatt/view/favourites.dart';
+import 'package:megawatt/view/forgotPassword.dart';
 import 'package:megawatt/view/home.dart';
 import 'package:megawatt/utils/colors.dart';
+import 'package:megawatt/view/homepage.dart';
 import 'package:megawatt/view/login.dart';
 import 'package:megawatt/view/orders.dart';
 import 'package:megawatt/view/profile.dart';
@@ -21,6 +23,8 @@ import 'package:sizer/sizer.dart';
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final restaurant = Restaurant();
+  //await Restaurant.uploadInitialMenu(restaurant.menu);
   runApp(const Megawatt());
 }
 
@@ -49,8 +53,10 @@ class Megawatt extends StatelessWidget {
               colorScheme: AppColors.darkScheme,
               useMaterial3: true,
             ),
-            themeMode: ThemeMode.light,
-            home: const AuthGate(),
+
+            themeMode: ThemeMode.system,
+            //home: const AuthGate(),
+            home: ForgotPasswordPage(),
             routes: {
               '/Home': (context) => Home(),
               '/Signup': (context) => Signup(onTap: () {}),
@@ -59,8 +65,8 @@ class Megawatt extends StatelessWidget {
               '/Profile': (context) => Profile(),
               '/Settings': (context) => Settings(),
               '/Search': (context) => Search(),
-
-              '/Orders': (context) => Orders(),
+              '/ForgotPassword': (context) => ForgotPasswordPage(),
+              '/Orders': (context) => OrdersPage(),
               '/Favoutires': (context) => Favourites(),
               '/SignInLogic': (context) => SignInLogic(),
               // '/Authentication': (context) => Authentication(),

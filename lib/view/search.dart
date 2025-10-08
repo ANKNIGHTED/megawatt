@@ -12,7 +12,8 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 class Search extends StatefulWidget {
-  const Search({super.key});
+  final int initialTabIndex;
+  const Search({super.key, this.initialTabIndex = 0});
 
   @override
   State<Search> createState() => _SearchState();
@@ -26,6 +27,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     super.initState();
     _tabController = TabController(
       length: FoodCategory.values.length,
+      initialIndex: widget.initialTabIndex,
       vsync: this,
     );
   }
@@ -79,6 +81,8 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final tabTitles =
+        FoodCategory.values.map((category) => category.name).toList();
     return SafeArea(
       child: Scaffold(
         body: NestedScrollView(
@@ -86,7 +90,10 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               (context, innerBoxIsScrolled) => [
                 Sliverappbar(
                   child: Text('Hello'),
-                  title: Tabbar(tabController: _tabController, tabs: []),
+                  title: Tabbar(
+                    tabController: _tabController,
+                    tabs: tabTitles.map((title) => Tab(text: title)).toList(),
+                  ),
                 ),
               ],
           body: Consumer<Restaurant>(

@@ -5,9 +5,15 @@ import 'package:megawatt/view/home.dart';
 
 import 'package:megawatt/view/profile.dart';
 import 'package:megawatt/view/search.dart';
+import 'package:megawatt/utils/cart_badge.dart'; // added import
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
+
+  static _HomepageState of(BuildContext context) {
+    // Looks up the state object in the widget tree
+    return context.findAncestorStateOfType<_HomepageState>()!;
+  }
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -16,6 +22,7 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   //keeps trac of the selected index /current page
   int _selectedIndex = 0;
+  int _searchInitialTabIndex = 0;
   //updates the new selected index
   void _onItemTapped(int index) {
     setState(() {
@@ -23,16 +30,30 @@ class _HomepageState extends State<Homepage> {
     });
   }
 
-  // A list of pages to display based on the selected index.
-  final List _pages = [
-    Home(), //home page
-    Search(),
-    Cart(),
-    Profile(),
-  ];
+  void navigateToTab(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  void navigateToSearchWithTab(int tabIndex) {
+    setState(() {
+      _searchInitialTabIndex = tabIndex; // Set the category index for Search
+      _selectedIndex =
+          1; // Navigate to the Search tab (assuming Search is at index 1)
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    // A list of pages to display based on the selected index.
+    final List _pages = [
+      Home(),
+
+      Search(initialTabIndex: _searchInitialTabIndex),
+      Cart(),
+      Profile(),
+    ];
     return Scaffold(
       /*
       appBar: AppBar(
@@ -49,7 +70,8 @@ class _HomepageState extends State<Homepage> {
 
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_checkout),
+            // replaced plain icon with CartBadge so a purple notch shows item count
+            icon: CartBadge(onTap: () => _onItemTapped(2)),
             label: 'Cart',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Me'),

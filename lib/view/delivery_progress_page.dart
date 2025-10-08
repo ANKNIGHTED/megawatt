@@ -22,7 +22,7 @@ class _DeliveryProgressPageState extends State<DeliveryProgressPage> {
     super.initState();
     //submit order to database
     String receipt = context.read<Restaurant>().displayCartReceipt();
-    _db.saveOrderToDatabase(receipt);
+    // _db.saveOrderToDatabase(receipt);
   }
 
   @override
