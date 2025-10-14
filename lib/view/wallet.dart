@@ -1,138 +1,222 @@
-import 'package:country_picker/country_picker.dart';
-import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
+import 'package:megawatt/model/restaurant.dart';
 import 'package:megawatt/utils/colors.dart';
+import 'package:megawatt/utils/mybutton.dart';
 import 'package:megawatt/utils/textstyles.dart';
+import 'package:megawatt/view/payment.dart';
+import 'package:megawatt/view/delivery_progress_page.dart'; // Import the delivery page
+import 'package:provider/provider.dart';
+import 'package:sizer/sizer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:megawatt/controller/services/authenticationServices/firestore.dart';
 
-class Authentication extends StatefulWidget {
-  const Authentication({super.key});
+// 1. Define Payment Methods Enum for state tracking
+enum PaymentMethod { cash, card, mpesa }
+
+class Wallet extends StatefulWidget {
+  const Wallet({super.key});
 
   @override
-  State<Authentication> createState() => _AuthenticationState();
+  State<Wallet> createState() => _WalletState();
 }
 
-class _AuthenticationState extends State<Authentication> {
-  // Use a nullable string or initialize with a default value
-  String selectedCountry = "+254";
-  TextEditingController _phoneController = TextEditingController();
+class _WalletState extends State<Wallet> {
+  PaymentMethod _selectedMethod = PaymentMethod.cash;
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: ListView(
-          padding: EdgeInsets.symmetric(horizontal: 13.w, vertical: 2.h),
+  // 🎯 Action for the 'Continue with Payment' button
+  Future<void> _processPayment() async {
+    final restaurant = context.read<Restaurant>();
+    if (restaurant.cart.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Cart is empty')));
+      return;
+    }
+
+    final String receipt = restaurant.displayCartReceipt();
+    final double total = restaurant.getTotalPrice();
+    final orderData = <String, dynamic>{
+      'receipt': receipt,
+      'total': total,
+      'paymentMethod': _selectedMethod.toString().split('.').last,
+      'createdAt': FieldValue.serverTimestamp(),
+      //optionally include user id if your stream filters by 'uid'
+      'uid': FirebaseAuth.instance.currentUser?.uid,
+      'items': restaurant.cart.map((c) => c.toMap()).toList(),
+    };
+
+    if (_selectedMethod == PaymentMethod.cash ||
+        _selectedMethod == PaymentMethod.mpesa) {
+      await FirestoreServices().saveOrderToDatabase(
+        orderData,
+      ); // must accept Map
+      restaurant.clearCart();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => DeliveryProgressPage()),
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const Payment()),
+      );
+    }
+  }
+
+  // Widget to build each tappable payment option tile
+  Widget _buildPaymentOption(
+    BuildContext context,
+    PaymentMethod method,
+    IconData icon,
+    String title,
+    String subtitle,
+  ) {
+    final bool isSelected = _selectedMethod == method;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedMethod = method;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16.0),
+        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 25.0),
+        decoration: BoxDecoration(
+          color:
+              isSelected ? colorScheme.secondaryContainer : colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color:
+                isSelected
+                    ? AppColors.primaryPurple
+                    : colorScheme.onSurface.withOpacity(0.1),
+            width: 2.0,
+          ),
+        ),
+        child: Row(
           children: [
-            SizedBox(height: 3.h),
-            Text(
-              "Enter your Mobile Number",
-              style: AppTextStyles.subheading(context),
+            // Icon / Radio Indicator
+            Icon(
+              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+              color:
+                  isSelected ? AppColors.primaryPurple : colorScheme.onSurface,
             ),
-            SizedBox(height: 3.h),
-            Row(
-              children: [
-                // Combine the InkWell and Container for the country code
-                InkWell(
-                  onTap: () {
-                    showCountryPicker(
-                      context: context,
-                      showPhoneCode: true,
-                      onSelect: (Country country) {
-                        setState(() {
-                          // Correct string interpolation
-                          selectedCountry = "+${country.phoneCode}";
-                        });
-                        if (kDebugMode) {
-                          print("Selected country: ${country.displayName}");
-                        }
-                      },
-                    );
-                  },
-                  child: Container(
-                    height: 6.h,
-                    width: 25.w,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.sp),
-                      color: Colors.grey.withOpacity(0.2), // Lighter shade
-                    ),
-                    alignment: Alignment.center, // Center the text
-                    child: Text(
-                      selectedCountry,
-                      style: AppTextStyles.heading2(context),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 2.w), // Add some space between widgets
-                // Added an Expanded TextField for the phone number
-                Expanded(
-                  child: TextField(
-                    controller: _phoneController,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
-                      hintText: "Mobile Number",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.sp),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 4.w),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // You can access the phone number here
-                String fullNumber = selectedCountry + _phoneController.text;
-                if (kDebugMode) {
-                  print("Full number: $fullNumber");
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryPurple,
-                minimumSize: Size(90.w, 6.h),
-              ),
-              child: Stack(
+            SizedBox(width: 4.w),
+            // Payment Method Icon
+            Icon(icon, size: 4.h, color: AppColors.primaryPurple),
+            SizedBox(width: 4.w),
+            // Title and Subtitle
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Next",
-                      style: AppTextStyles.subheading(
-                        context,
-                      ).copyWith(color: Colors.white),
-                    ),
+                  Text(
+                    title,
+                    style: AppTextStyles.subheading(
+                      context,
+                    ).copyWith(color: colorScheme.onSurface),
                   ),
-                  Positioned(
-                    right: 2.w,
-                    child: Icon(Icons.arrow_forward, color: Colors.white),
-                  ),
+                  Text(subtitle, style: AppTextStyles.caption(context)),
                 ],
               ),
             ),
-            SizedBox(height: 3.w),
-            Text(
-              "By proceeding you consent to get calls, Whatsapp, or SMS messages, including by automated means, from Megawatt and its affiliates to the number provided.",
-              style: AppTextStyles.caption(context),
-            ),
-            Row(
-              children: [
-                Expanded(child: Divider(color: Colors.grey)),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "or",
-                    style: AppTextStyles.heading2(
-                      context,
-                    ).copyWith(color: Colors.grey),
-                  ),
-                ),
-                Expanded(child: Divider(color: Colors.grey)),
-              ],
-            ),
           ],
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Access the total price for display
+    final cartProvider = context.watch<Restaurant>();
+    final double cartTotal = cartProvider.getTotalPrice();
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Payment Options'), centerTitle: true),
+      body: Column(
+        children: [
+          // 2. Wallet Total Display (Uber-like)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(25.0),
+            color: Theme.of(context).colorScheme.primary,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Order Total",
+                  style: AppTextStyles.heading2(
+                    context,
+                  ).copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                ),
+                SizedBox(height: 1.h),
+                Text(
+                  "Ksh ${cartTotal.toStringAsFixed(2)}",
+                  style: AppTextStyles.heading1(context).copyWith(
+                    color: AppColors.primaryOrange, // Highlight the price
+                    fontSize: 32,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: 3.h),
+
+          // 3. Payment Method Options (Scrollable)
+          Expanded(
+            child: ListView(
+              children: [
+                Text(
+                  "Select Payment Method",
+                  style: AppTextStyles.heading2(context),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 2.h),
+
+                // Option 1: Cash on Delivery
+                _buildPaymentOption(
+                  context,
+                  PaymentMethod.cash,
+                  Icons.monetization_on,
+                  "Cash on Delivery",
+                  "Pay the courier when your food arrives.",
+                ),
+
+                // Option 2: Pay with Card
+                _buildPaymentOption(
+                  context,
+                  PaymentMethod.card,
+                  Icons.credit_card,
+                  "Credit / Debit Card",
+                  "Securely pay with your saved card.",
+                ),
+
+                // Option 3: Mpesa
+                _buildPaymentOption(
+                  context,
+                  PaymentMethod.mpesa,
+                  Icons.phone_android,
+                  "Lipa na Mpesa",
+                  "Pay using the M-Pesa mobile service.",
+                ),
+              ],
+            ),
+          ),
+
+          // 4. Continue Button (Fixed at Bottom)
+          Padding(
+            padding: EdgeInsets.only(bottom: 5.h, left: 14, right: 14),
+            child: Mybutton(
+              text: "Continue with Payment",
+              onTap: _processPayment,
+            ),
+          ),
+        ],
       ),
     );
   }

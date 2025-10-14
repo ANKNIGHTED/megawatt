@@ -17,6 +17,7 @@ import 'package:megawatt/view/search.dart';
 import 'package:megawatt/view/settings.dart';
 import 'package:megawatt/view/signInLogic%20.dart';
 import 'package:megawatt/view/signup.dart';
+import 'package:megawatt/view/wallet.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
@@ -55,8 +56,8 @@ class Megawatt extends StatelessWidget {
             ),
 
             themeMode: ThemeMode.system,
-            //home: const AuthGate(),
-            home: ForgotPasswordPage(),
+            home: const AuthGate(),
+            //home: ForgotPasswordPage(),
             routes: {
               '/Home': (context) => Home(),
               '/Signup': (context) => Signup(onTap: () {}),
@@ -65,6 +66,7 @@ class Megawatt extends StatelessWidget {
               '/Profile': (context) => Profile(),
               '/Settings': (context) => Settings(),
               '/Search': (context) => Search(),
+              '/Wallet': (context) => Wallet(),
               '/ForgotPassword': (context) => ForgotPasswordPage(),
               '/Orders': (context) => OrdersPage(),
               '/Favoutires': (context) => Favourites(),
